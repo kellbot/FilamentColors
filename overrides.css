@@ -1,0 +1,15 @@
+.swatchcard button {
+    position: absolute;
+    right: -10px;
+    top: -6px;
+    background: white;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    height: 35px;
+    width: 35px;
+}
+
+.swatchcard.inlibrary {
+    border: 1px solid green;
+}
+
