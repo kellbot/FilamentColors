@@ -1,28 +1,54 @@
 const APIURL = 'https://filamentcolors.xyz/api/swatch/';
+let filamentCollection;
 
-refreshSwatches();
+// Pul
+loadSidebar();
 
-function refreshSwatches() {
-    // Load the swatch library and create buttons
-    chrome.storage.sync.get(["libraryFilaments"]).then((result) => {
-        console.log("Swatch library loaded");
-        
-        if ( result.libraryFilaments) {
-            swatchList = result.libraryFilaments;
+
+
+// Loads and verifies saved entries
+function loadSavedCollection(saveData) {
+    let collection = [];
+    saveData.forEach((entry) => {
+        if ( typeof(entry) == 'CollectedFilament') {
+            collection.push(entry);
+        } else {
+            console.log ("Unexpected save data found:");
+            console.log(entry);
         }
-        populateSwatchList(swatchList);
+    });
+    return collection;
+}
+
+
+// Get saved library
+function loadSidebar(){
+
+    // fetch the collection data from sync storage
+    chrome.storage.sync.get(["savedFilaments"]).then((result) => {
+
+        if ( result.savedFilaments) {
+            // Contains entries 
+            filamentCollection = loadSavedCollection(result.savedFilaments);
+            // Populate swatch list
+            refreshSwatches();
+        }
     });
 }
 
 
+
 chrome.storage.onChanged.addListener((changes, namespace) => {
     console.log("Library data changed");
-    if (changes.libraryFilaments) {
+    if (changes.savedFilaments) {
+        filamentCollection = loadSavedCollection(result.savedFilaments);
         refreshSwatches();
     }
   });
 
-function populateSwatchList(ids){
+
+//this assumes the global filamentcollection is up to date
+function refreshSwatches(){
 
     var swatchul = document.getElementById('swatchlist');
     // Empty out the UL
@@ -30,15 +56,17 @@ function populateSwatchList(ids){
         swatchul.removeChild(swatchul.firstChild);
     }
 
-    // load or create filament data
-    chrome.storage.local.get(["filamentData"]).then( (storage) => 
+    // load or create filament data from filamentcolors.xyz
+    chrome.storage.local.get(["xyzFilamentData"]).then( (storage) => 
     {
-        let localFilaments = storage.filamentData;
-        ids.forEach(function(id) {
+        let localFilamentColorData = storage.filamentData;
+
+        // This is from the global
+        filamentCollection.forEach(function(filamentEntry) {
 
             // check the local store for the filament
-            if (!localFilaments.id) {
-                 fetch(APIURL + id, {
+            if (!localFilamentColorData.id) {
+                 fetch(APIURL + filamentEntry.id, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,8 +76,8 @@ function populateSwatchList(ids){
                 }).then(responseData => {
                     if (responseData.id == id) 
                     {
-                        localFilaments[id] = responseData;
-                        chrome.storage.local.set({filamentData: localFilaments}).then(() => {
+                        localFilamentColorData[id] = responseData;
+                        chrome.storage.local.set({filamentData: localFilamentColorData}).then(() => {
                             console.log("Updated filament " + id);
                           });
                     }
@@ -59,7 +87,7 @@ function populateSwatchList(ids){
             var swatchli = document.createElement("li");
             let swatchdiv = document.createElement("div");
 
-            let swatchdata = localFilaments[id];
+            let swatchdata = localFilamentColorData[id];
             if (swatchdata) {
                 swatchdiv.classList.add('colorswatch');
                 swatchdiv.style.backgroundColor = '#' + swatchdata.hex_color;
