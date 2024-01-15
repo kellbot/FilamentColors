@@ -2,9 +2,6 @@ const APIURL = 'https://filamentcolors.xyz/api/swatch/';
 
 refreshSwatches();
 
-
-
-
 function refreshSwatches() {
     // Load the swatch library and create buttons
     chrome.storage.sync.get(["libraryFilaments"]).then((result) => {
@@ -60,11 +57,21 @@ function populateSwatchList(ids){
             }
 
             var swatchli = document.createElement("li");
+            let swatchdiv = document.createElement("div");
+
             let swatchdata = localFilaments[id];
             if (swatchdata) {
-                swatchli.innerHTML = swatchdata.manufacturer.name + ": " + swatchdata.color_name;
+                swatchdiv.classList.add('colorswatch');
+                swatchdiv.style.backgroundColor = '#' + swatchdata.hex_color;
+                swatchtext = document.createElement('p');
+                
+                swatchtext.innerHTML = swatchdata.manufacturer.name + ": " + swatchdata.color_name;
+
+                swatchli.appendChild(swatchdiv);
+                swatchli.appendChild(swatchtext);
+               
             } else {
-                swatchli.innerHTML = id + "loading...";
+                swatchli.innerHTML = id + " loading...";
             }
             swatchul.appendChild(swatchli);
     
