@@ -13,6 +13,7 @@ chrome.storage.sync.get(["savedFilaments"]).then((result) => {
 // Load a FilamentCollection into the sidebar
 function loadSidebar(filamentCollection) {
     refreshSwatches(filamentCollection);
+    updateButtonURL(filamentCollection);
 }
 
 
@@ -24,6 +25,13 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
         refreshSwatches(savedFilamentCollection);
     }
   });
+
+function updateButtonURL(collection) {
+    let button = document.getElementById("collectionButton");
+    button.onclick = (function (){
+        chrome.tabs.create({ url: collection.xyzURL() });
+    });
+}
 
 
 // Populates the swtch UL
@@ -96,46 +104,4 @@ function saveColorData(colorData) {
         chrome.storage.local.set({xyzFilamentData: allData});
     });
 }
-
-    // load or create filament data from filamentcolors.xyz
-    //     chrome.storage.local.get(["xyzFilamentData"]).then( (storage) => 
-    //     {
-    //         let localFilamentColorData = storage.filamentData;
-
-    //         // This is from the global
-    //         filamentCollection.forEach(function(filamentEntry) {
-
-    //             // check the local store for the filament
-    //             if (!localFilamentColorData.id) {
-    //                  fetch(APIURL + filamentEntry.id, {
-    //                 method: 'GET',
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 },
-    //                 }).then(res => {
-    //                     return res.json();
-    //                 }).then(responseData => {
-    //                     if (responseData.id == id) 
-    //                     {
-    //                         localFilamentColorData[id] = responseData;
-    //                         chrome.storage.local.set({filamentData: localFilamentColorData}).then(() => {
-    //                             console.log("Updated filament " + id);
-    //                           });
-    //                     }
-    //                 })
-    //             }
-
-
-
-    //             let swatchdata = localFilamentColorData[id];
-    //             if (swatchdata) {
-    //                 
-
-    //             } else {
-    //                 swatchli.innerHTML = id + " loading...";
-    //             }
-    //             swatchul.appendChild(swatchli);
-
-    //         });
-    //     })
 

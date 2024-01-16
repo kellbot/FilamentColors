@@ -71,4 +71,17 @@ class FilamentCollection {
     includesXYZ(id) {
         return this.filaments.some(obj => obj.xyzid === id);
     }
+
+    //
+    xyzURL() {
+        let baseURL = "https://filamentcolors.xyz/library/collection/";
+        let validFilaments = this.filaments.filter((filament) => {
+            return filament.xyzid;
+        });
+        let xyzids = validFilaments.map((filament) => {
+            return filament.xyzid;
+        });
+        return baseURL + xyzids.join(',');
+
+    }
 }
