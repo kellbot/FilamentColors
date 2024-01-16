@@ -24,6 +24,9 @@
     "resources": [  "images/remove_icon.png",   "images/add_icon.png"],
     "matches": ["https://filamentcolors.xyz/*"]
   }],
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "host_permissions": [
     "https://filamentcolors.xyz/*"
   ],

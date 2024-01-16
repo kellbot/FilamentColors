@@ -2,6 +2,9 @@ let savedFilamentCollection;
 chrome.storage.sync.get(["savedFilaments"]).then((result) => {
     savedFilamentCollection = new FilamentCollection(result.savedFilaments);
 
+    console.log(result);
+    console.log(savedFilamentCollection);
+
     loadSwatchButtons( savedFilamentCollection);
 });
 
@@ -12,7 +15,7 @@ function loadSwatchButtons(collection) {
     var button = document.createElement("button")
 
     swatchCards.forEach(function(card) {
-        var swatchId = card.getAttribute('data-swatch-id');
+        var swatchId = parseInt(card.getAttribute('data-swatch-id'));
         var firstChild = card.firstChild;
 
         var cardButton = card.insertBefore(button.cloneNode(true), firstChild);
@@ -34,7 +37,7 @@ function loadSwatchButtons(collection) {
 } 
 
 function clickHandler()  {
-    var swatchId = this.getAttribute('data-swatch-id');
+    var swatchId = parseInt(this.getAttribute('data-swatch-id'));
     var action = this.getAttribute('data-library-action');
     var swatchCard = this.parentNode;
     

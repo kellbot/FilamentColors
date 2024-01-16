@@ -2,6 +2,7 @@
 class CollectedFilament {
     constructor(data = {}){
         
+        if (typeof(data.xyzid) === 'string') data.xyzid = parseInt(data.xyzid);
         this.xyzid = data.xyzid; // ID from filamentcolors.xyz entry
         this.manufacturerId = data.manufacturerId; // Manufacturer ID
         this.color_name = data.colorName; // String color name
@@ -13,12 +14,23 @@ class CollectedFilament {
 
 class FilamentCollection {
     constructor(saveData) {
-        this.filaments = saveData ? saveData : [];
+        this.filaments = [];
+        saveData.forEach(element => {
+            if (typeof element === CollectedFilament) {
+                this.filaments.push(element);
+            } else {
+                this.filaments.push(new CollectedFilament(element))
+            }
+        });
     }
 
     // (CollectedFilament)
     add(filament) {
-        this.filaments.push(filament);
+        if (typeof filament === 'CollectedFilament') {
+            this.filaments.push(filament);
+        } else { 
+            throw new Error("Must be Collected Filament");
+        }
 
     }
 
