@@ -15,6 +15,7 @@ class CollectedFilament {
 class FilamentCollection {
     constructor(saveData) {
         this.filaments = [];
+        if (saveData) {
         saveData.forEach(element => {
             if (typeof element === CollectedFilament) {
                 this.filaments.push(element);
@@ -22,6 +23,7 @@ class FilamentCollection {
                 this.filaments.push(new CollectedFilament(element))
             }
         });
+    }
     }
 
     // (CollectedFilament)
