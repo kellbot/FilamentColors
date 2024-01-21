@@ -131,20 +131,28 @@ async function refreshSwatches(collection) {
         swatchul.removeChild(swatchul.firstChild);
     }
 
+    let swatches = [];
+
+
     collection.filaments.forEach(filament => {
         if (filament.xyzid){
             if (typeof filament.xyzid === 'string')
                 filament.xyzid = parseInt(filament.xyzid);
             if (!colorDataCache[filament.xyzid]) {
                 updateXYZ(filament.xyzid).then( (colorData) => {
-                    addSwatch({hex: colorData.hex_color, brand: colorData.manufacturer.name, name: colorData.color_name}, swatchul);
+                    swatches.push({hex: colorData.hex_color, brand: colorData.manufacturer.name, name: colorData.color_name});
                 })
             } else {
                 let swatchData = colorDataCache[filament.xyzid];
-                addSwatch({hex: swatchData.hex_color, brand: swatchData.manufacturer.name, name: swatchData.color_name}, swatchul);
+                swatches.push({hex: swatchData.hex_color, brand: swatchData.manufacturer.name, name: swatchData.color_name});
             }
         }
     });
+    if (swatches.length > 0) {
+        sortSwatchByHue(swatches).forEach((swatch) => addSwatch(swatch, swatchul));
+    }
+
+    
 
 }
 
@@ -155,11 +163,13 @@ function addSwatch({hex, brand, name}, domul) {
     let swatchdiv = document.createElement("div");
     swatchdiv.classList.add('colorswatch');
     swatchdiv.style.backgroundColor = '#' + hex;
-    swatchtext = document.createElement('p');
-    swatchtext.classList.add('tooltip');
-    swatchtext.innerHTML = brand + ": " + name;
-    
-    swatchdiv.appendChild(swatchtext);
+    tooltip = document.createElement('p');
+    tooltip.classList.add('tooltip');
+    tooltip.innerHTML = brand + ": " + name;
+    label = document.createElement('p');
+    label.innerHTML = brand;
+    swatchdiv.appendChild(tooltip);
+    swatchdiv.appendChild(label);
     swatchli.appendChild(swatchdiv);
     domul.appendChild(swatchli);
 }
@@ -248,5 +258,44 @@ function populateManufacturers(brands) {
         option.value = brandvalue;
 
         dropdown.add(option);
+    });
+}
+
+function hexToHSL(hex) {
+    // Convert hex to RGB
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+
+    // Convert RGB to HSL
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+
+    if (max === min) {
+        h = s = 0; // achromatic
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return [h, s, l];
+}
+
+function sortSwatchByHue(swatchList) {
+    return swatchList.sort((a, b) => {
+        const hslA = hexToHSL(a.hex);
+        const hslB = hexToHSL(b.hex);
+
+
+        // Sort by hue value
+        return hslA[0] - hslB[0];
     });
 }
