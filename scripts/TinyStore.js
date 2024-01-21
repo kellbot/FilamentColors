@@ -39,8 +39,8 @@ class TinyStore {
     }
 
     import(data) {
-        console.log(data);
-        this.data = data;
+        if (data)
+            this.data = data;
     }
 
     export() {

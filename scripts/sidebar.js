@@ -206,7 +206,7 @@ async function getBrandData() {
 function saveColorData(colorData) {
     chrome.storage.local.get(["xyzFilamentData"]).then( (storage) => 
     {
-        allData = storage.xyzFilamentData;
+        allData = storage.xyzFilamentData? storage.xyzFilamentData : {};
         allData[colorData.id] = colorData;
         chrome.storage.local.set({xyzFilamentData: allData});
     });
