@@ -5,18 +5,19 @@
   "version": "0.6",
   "action": {
     "default_icon": {
+      "16": "images/16x16.png",
+      "48": "images/48x48.png",
       "128": "images/icon-128.png"
     },
     "default_popup": "popup.html"
 
   },
   "icons": {
-    "16": "images/icon-16.png",
-    "32": "images/icon-32.png",
-    "48": "images/icon-48.png",
+    "16": "images/16x16.png",
+    "48": "images/48x48.png",
     "128": "images/icon-128.png"
   },
-  "permissions": ["activeTab", "tabs", "scripting", "storage", "sidePanel"],
+  "permissions": ["tabs","scripting", "storage", "sidePanel"],
   "web_accessible_resources": [{
     "resources": [  "images/remove_icon.png",   "images/add_icon.png"],
     "matches": ["https://filamentcolors.xyz/*"]

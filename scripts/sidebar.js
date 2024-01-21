@@ -70,10 +70,17 @@ function addButtonListeners(collection) {
                 jsonData[key] = value;
                 
             });
-
+            
             // Log the JSON objectol
             customFilaments.add(jsonData);
-           chrome.storage.sync.set({customTinyStore: customFilaments.export()});
+   
+            chrome.storage.sync.set({customTinyStore: customFilaments.data}, function() {
+                if (chrome.runtime.lastError) {
+                    console.log(chrome.runtime.lastError);
+                }
+            });
+ 
+   
             refreshCustoms(customFilaments.data);
             return false;
     });
@@ -82,6 +89,8 @@ function addButtonListeners(collection) {
 function refreshCustoms(customList){
 
     if (!customList) return false;
+    if (!savedBrands) throw new Error("Brand data not found");
+
     let customul = document.getElementById('customlist');
     while (customul.firstChild) {
         customul.removeChild(customul.firstChild);
@@ -91,7 +100,11 @@ function refreshCustoms(customList){
         let brandId = parseInt(customList[key].brand);
 
         if (brandId){
-            addSwatch({hex: customList[key].hex, brand: savedBrands[brandId].name, name: customList[key].description }, customul)
+            addSwatch({
+                hex: customList[key].hex, 
+                brand: savedBrands[brandId].name, 
+                name: customList[key].description }, 
+            customul)
 
         } else {
             console.log("Brand ID missing");
@@ -188,7 +201,6 @@ async function getBrandData() {
     
                 if (responseData.results) {
                     nextURL = responseData.next;
-                    let pageBrands = {};
                     responseData.results.forEach((result) => {
                         savedBrands[result.id] = result
                     });

@@ -8,7 +8,7 @@ class TinyStore {
     add(records) {
         // Adding multiple
         if (records.length) {
-
+            let rec = 1;
         } else {
             this.addSingle(records);
         }
@@ -17,22 +17,28 @@ class TinyStore {
     }
 
     addSingle(record) {
+        
+        this.nextIndex = this.findNextIndex();
+        console.log("NExt index:" + this.nextIndex);
         if (this.autoincrement && !record.id) {
             record.id = this.nextIndex;
+            console.log("adding single record" + this.nextIndex);
         }
         this.data[record.id] = record;
         
-        this.nextIndex = this.findNextIndex();
            
     }
 
     findNextIndex() {
+       
         let start = this.nextIndex + 1;
         let foundIndex = false;
         while (!foundIndex) {
 
             if (!(start in this.data)) {
                 foundIndex = start;
+            } else {
+                start++;
             }
         }
         return start;
