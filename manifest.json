@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Filament Goblin",
   "description": "Tool for managing 3D printer filaments via FilamentsColors.XYZ",
-  "version": "0.1",
+  "version": "0.5",
   "action": {
     "default_icon": {
       "16": "images/icon-16.png",
