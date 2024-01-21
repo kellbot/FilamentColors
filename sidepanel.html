@@ -10,17 +10,35 @@
             list-style-type: none;
         }
         .colorswatch {
-            width: 10px;
-            height :10px;
+            width: 30px;
+            height :30px;
+            border-color: #aaaaaa;
             border-radius: 5px;
             margin-right: 5px;
             margin-top: 3px;
             float: left;
+            position: relative;
         }
-        #swatchlist {
+        #swatchlist, #customlist {
             font-size: 1em;
             padding: 0;
         }
+        .tooltip {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        white-space: nowrap;
+        z-index: 1000;
+    }
+    .colorswatch:hover .tooltip {
+    display: block;
+}
     </style>
 </head>
 
@@ -32,8 +50,30 @@
     <ul id = "swatchlist">
         <li>No filaments found</li>
     </ul>
+    <h2>Custom Filaments</h2>
+
+    <div>
+        
+        <button id="customButton">Add Custom Filament</button>
+        <form id="customFilamentForm" style="display: none;">
+            <label for="hex">Color</label>
+            <input name="hex" id="hexColorPicker" /><br />
+            <label for="brand">Manufacturer</label>
+            <select id="brandSelector" name="brand">
+                <!-- Options will be dynamically generated using JavaScript -->
+            </select><br />
+            <label for="description">Description</label>
+            <input  type="text" name="description" />
+            <button id="saveCustom">Save</button>
+
+        
+        </form>
+    </div>
+        <ul id = "customlist">
+    </ul>
   </body>
-  
+  <script src="scripts/jscolor.min.js"></script>
+  <script src="scripts/TinyStore.js"></script>  
   <script src="scripts/CollectedFilament.js"></script>
   <script src="scripts/sidebar.js"></script>
 </html>

@@ -2,20 +2,59 @@ let savedFilamentCollection;
 chrome.storage.sync.get(["savedFilaments"]).then((result) => {
     savedFilamentCollection = new FilamentCollection(result.savedFilaments);
 
-    console.log(result);
-    console.log(savedFilamentCollection);
-
     loadSwatchButtons( savedFilamentCollection);
 });
 
+const observer = new MutationObserver(mutationsList => {
+    mutationsList.forEach(mutation => {
+
+        // Check if nodes were added
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+    
+            mutation.addedNodes.forEach(addedNode => {
+                const swatchCardElements = findAllSwatchCards(addedNode);
+                if (swatchCardElements.length > 0) {
+                    // Your logic for handling each .swatchcard element
+                    swatchCardElements.forEach(swatchCardElement => {
+                        addCollectionTools(swatchCardElement, savedFilamentCollection);
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+function findAllSwatchCards(node) {
+    const swatchCardElements = [];
+    if (node.nodeType === 1 && node.classList.contains('swatchcard')) {
+        // If the current node has the class .swatchcard, add it to the array
+        swatchCardElements.push(node);
+    }
+
+    // Iterate over descendants
+    for (let i = 0; i < node.childNodes.length; i++) {
+        const descendants = findAllSwatchCards(node.childNodes[i]);
+        swatchCardElements.push(...descendants);
+    }
+
+    return swatchCardElements;
+}
+
+// Start observing changes in the entire document
+observer.observe(document.body, { childList: true, subtree: true });
 
 
 function loadSwatchButtons(collection) {
     var swatchCards = document.querySelectorAll('.swatchcard');
-    var button = document.createElement("button")
-
     swatchCards.forEach(function(card) {
-        var swatchId = parseInt(card.getAttribute('data-swatch-id'));
+        addCollectionTools(card, collection)
+    })
+} 
+
+function addCollectionTools(card, collection) {
+    var button = document.createElement("button");
+    var swatchId = parseInt(card.getAttribute('data-swatch-id'));
         var firstChild = card.firstChild;
 
         var cardButton = card.insertBefore(button.cloneNode(true), firstChild);
@@ -33,8 +72,7 @@ function loadSwatchButtons(collection) {
         cardButton.setAttribute('data-library-action', action);
         
         cardButton.onclick = clickHandler;
-    })
-} 
+}
 
 function clickHandler()  {
     var swatchId = parseInt(this.getAttribute('data-swatch-id'));
