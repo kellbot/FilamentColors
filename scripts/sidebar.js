@@ -81,9 +81,7 @@ function addButtonListeners(collection) {
 
 function refreshCustoms(customList){
 
-    console.log(savedBrands);
-    console.log(customList);
-
+    if (!customList) return false;
     let customul = document.getElementById('customlist');
     while (customul.firstChild) {
         customul.removeChild(customul.firstChild);
