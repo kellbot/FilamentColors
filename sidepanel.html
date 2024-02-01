@@ -1,20 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Filament Library</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <style>
         body {
             margin: 20px;
         }
+
         ul {
             list-style-type: none;
         }
+
         .section {
             clear: both;
         }
+
+        .trash {
+            display: none;
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            cursor: pointer;
+
+        }
+        .trash:hover {
+            color: #fff;
+        }
+
         .colorswatch {
-            width: 50px;
-            height :50px;
+            width: 75px;
+            height: 25px;
             padding: 5px;
             text-align: center;
             vertical-align: center;
@@ -26,40 +43,54 @@
             position: relative;
             font-size: x-small;
         }
-        #swatchlist, #customlist {
+
+        #swatchlist,
+        #customlist {
             font-size: 1em;
             padding: 0;
         }
+
         .tooltip {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #333;
-        color: #fff;
-        padding: 5px;
-        border-radius: 5px;
-        white-space: nowrap;
-        z-index: 1000;
-    }
-    .colorswatch:hover .tooltip {
-    display: block;
-}
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+
+        .colorswatch:hover .tooltip {
+            display: block;
+        }
+
+        .colorswatch:hover .trash {
+            display: block;
+        }
     </style>
 </head>
 
-  <body>
+<body>
+    <div style="display: none;">
+        <div id="swatch-prototype" class="colorswatch">
+            <p class="tooltip">Tooltip</p>
+            <span class="material-icons-outlined trash">delete</span>
+        </div>
+    </div>
     <div class="section">
-    <h1>Filament Library</h1>
-    <h2>Collected Filaments</h2>
-    
-    <button id="collectionButton">Open on FilamentColors.xyz</button>
-    <ul id = "swatchlist">
-        <li>No filaments found</li>
-    </ul>
-    
-   
+        <h1>Filament Library</h1>
+        <h2>Collected Filaments</h2>
+
+        <button id="collectionButton">Open on FilamentColors.xyz</button>
+        <ul id="swatchlist">
+            <li>No filaments found</li>
+        </ul>
+
+
     </div>
     <div class="section">
         <h2>Custom Filaments</h2>
@@ -72,17 +103,18 @@
                 <!-- Options will be dynamically generated using JavaScript -->
             </select><br />
             <label for="description">Description</label>
-            <input  type="text" name="description" />
+            <input type="text" name="description" />
             <button id="saveCustom">Save</button>
 
-        
+
         </form>
     </div>
-        <ul id = "customlist">
+    <ul id="customlist">
     </ul>
-  </body>
-  <script src="scripts/jscolor.min.js"></script>
-  <script src="scripts/TinyStore.js"></script>  
-  <script src="scripts/CollectedFilament.js"></script>
-  <script src="scripts/sidebar.js"></script>
+</body>
+<script src="scripts/jscolor.min.js"></script>
+<script src="scripts/TinyStore.js"></script>
+<script src="scripts/CollectedFilament.js"></script>
+<script src="scripts/sidebar.js"></script>
+
 </html>

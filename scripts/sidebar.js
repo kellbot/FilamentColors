@@ -63,6 +63,8 @@ function addButtonListeners(collection) {
         this.style.display = 'none';
     });
 
+
+
     saveCustomButton.onclick = (function (){
         let fd = new FormData(customForm);
         var jsonData = {};
@@ -103,7 +105,9 @@ function refreshCustoms(customList){
             addSwatch({
                 hex: customList[key].hex, 
                 brand: savedBrands[brandId].name, 
-                name: customList[key].description }, 
+                name: customList[key].description ,
+                id: customList[key].id 
+            },
             customul)
 
         } else {
@@ -133,18 +137,17 @@ async function refreshSwatches(collection) {
 
     let swatches = [];
 
-
     collection.filaments.forEach(filament => {
         if (filament.xyzid){
             if (typeof filament.xyzid === 'string')
                 filament.xyzid = parseInt(filament.xyzid);
             if (!colorDataCache[filament.xyzid]) {
                 updateXYZ(filament.xyzid).then( (colorData) => {
-                    swatches.push({hex: colorData.hex_color, brand: colorData.manufacturer.name, name: colorData.color_name});
+                    swatches.push({hex: colorData.hex_color, brand: colorData.manufacturer.name, name: colorData.color_name, id: filament.id});
                 })
             } else {
                 let swatchData = colorDataCache[filament.xyzid];
-                swatches.push({hex: swatchData.hex_color, brand: swatchData.manufacturer.name, name: swatchData.color_name});
+                swatches.push({hex: swatchData.hex_color, brand: swatchData.manufacturer.name, name: swatchData.color_name, id : filament.id});
             }
         }
     });
@@ -156,20 +159,38 @@ async function refreshSwatches(collection) {
 
 }
 
-function addSwatch({hex, brand, name}, domul) {
-
+function addSwatch({hex, brand, name, id}, domul) {
 
     var swatchli = document.createElement("li");
-    let swatchdiv = document.createElement("div");
-    swatchdiv.classList.add('colorswatch');
+
+    let swatchdiv = document.getElementById('swatch-prototype').cloneNode(true);
+   
     swatchdiv.style.backgroundColor = '#' + hex;
-    tooltip = document.createElement('p');
-    tooltip.classList.add('tooltip');
+
+    tooltip = swatchdiv.querySelector('.tooltip');
+
     tooltip.innerHTML = brand + ": " + name;
-    label = document.createElement('p');
-    label.innerHTML = brand;
-    swatchdiv.appendChild(tooltip);
-    swatchdiv.appendChild(label);
+
+    
+    trash = swatchdiv.querySelector('.trash');
+    if (id) {
+        swatchdiv.setAttribute('data-id', id);
+        trash.setAttribute('data-id', id);
+        trash.onclick = (function (){
+            id = this.getAttribute('data-id');
+            
+            customFilaments.removeSingle(id);
+            chrome.storage.sync.set({customTinyStore: customFilaments.data}, function() {
+                if (chrome.runtime.lastError) {
+                    console.log(chrome.runtime.lastError);
+                }
+            });
+            swatchdiv.remove();
+
+        });
+    } else {
+        swatchdiv.removeChild(trash);
+    }
     swatchli.appendChild(swatchdiv);
     domul.appendChild(swatchli);
 }

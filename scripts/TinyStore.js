@@ -16,6 +16,13 @@ class TinyStore {
 
     }
 
+    removeSingle(id) {
+        console.log(id);
+        console.log(this.data[id]);
+        delete this.data[id];
+        console.log(this.data[id]);
+    }
+
     addSingle(record) {
         
         this.nextIndex = this.findNextIndex();
